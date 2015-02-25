@@ -17,16 +17,16 @@ type whereFragment struct {
 func newWhereFragment(whereSqlOrMap interface{}, args []interface{}) *whereFragment {
 
 	if c, ok := whereSqlOrMap.(*clauses); ok {
-		var sql string
+		var sql bytes.Buffer
 		var vals []interface{}
 		for _, clause := range c.cl {
-			if sql != "" {
-				sql += " OR "
+			if sql.Len() != 0 {
+				sql.WriteString(" OR ")
 			}
-			sql += clause.Sql
+			sql.WriteString(clause.Sql)
 			vals = append(vals, clause.Values...)
 		}
-		return &whereFragment{Condition: sql, Values: vals}
+		return &whereFragment{Condition: sql.String(), Values: vals}
 	}
 
 	switch pred := whereSqlOrMap.(type) {
