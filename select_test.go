@@ -239,9 +239,11 @@ func TestSelectAndClauseSql(t *testing.T) {
 	assert.Equal(t, 3, args[2])
 
 	// subclause might work this way
-	// sql, args = s.Select("a").From("b").
-	// 	Where(Clause("c = ?", 1).And(Clause("d = ?", 2))).
-	// 	ToSql()
+	// i guess we'd want to be able to do things like:
+	// Clause(Clause("a = ?", 1).And("b = ?", 2)).Or(Clause("c = ?", 3).Or("d = ?", 4))
+	// (a = 1 AND b = 2) OR (c = 3 OR d = 4)
+	// Clause(Clause("a = ?", 1).And("b = ?", 2)).Or("c = ?", 3).Or("d = ?", 4)
+	// (a = 1 AND b = 2) OR c = 3 OR d = 4
 }
 
 func TestSelectWhereEqSql(t *testing.T) {
