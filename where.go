@@ -19,12 +19,30 @@ func newWhereFragment(whereSqlOrMapOrClause interface{}, args []interface{}) *wh
 	if c, ok := whereSqlOrMapOrClause.(*clauses); ok {
 		var sql bytes.Buffer
 		var vals []interface{}
+		var started bool
+
 		for _, clause := range c.cl {
-			if sql.Len() != 0 {
-				sql.WriteString(" OR ")
+			if started {
+				if clause.isOr {
+					sql.WriteString(" OR ")
+				} else {
+					sql.WriteString(" AND (")
+				}
+			} else if !clause.isOr {
+				sql.WriteRune('(')
 			}
+
 			sql.WriteString(clause.Sql)
+
+			if !started && !clause.isOr {
+				sql.WriteRune(')')
+			}
+			if !clause.isOr {
+				sql.WriteRune(')')
+			}
+
 			vals = append(vals, clause.Values...)
+			started = true
 		}
 		return &whereFragment{Condition: sql.String(), Values: vals}
 	}
