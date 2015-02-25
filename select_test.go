@@ -182,6 +182,43 @@ func TestSelectWhereMapSql(t *testing.T) {
 	assert.Equal(t, args, []interface{}{false})
 }
 
+func TestSelectOrClauseSql(t *testing.T) {
+	s := createFakeSession()
+
+	clauses := Clause("c = ?", 10)
+	sql, args := s.Select("a").From("b").Where(clauses).ToSql()
+	assert.Equal(t, "SELECT a FROM b WHERE (c = ?)", sql)
+	assert.Equal(t, 1, len(args))
+	assert.Equal(t, 10, args[0])
+
+	clauses = Clause("c = ?", 10).Or("d = ?", 20)
+	sql, args = s.Select("a").From("b").Where(clauses).ToSql()
+	assert.Equal(t, "SELECT a FROM b WHERE (c = ? OR d = ?)", sql)
+	assert.Equal(t, 2, len(args))
+	assert.Equal(t, 10, args[0])
+	assert.Equal(t, 20, args[1])
+
+	clauses = Clause("c = ?", 10).Or("d = ?", 20).Or("e = ?", 30)
+	sql, args = s.Select("a").From("b").Where(clauses).ToSql()
+	assert.Equal(t, "SELECT a FROM b WHERE (c = ? OR d = ? OR e = ?)", sql)
+	assert.Equal(t, 3, len(args))
+	assert.Equal(t, 10, args[0])
+	assert.Equal(t, 20, args[1])
+	assert.Equal(t, 30, args[2])
+
+	sql, args = s.Select("a").From("b").
+		Where(Clause("c = ?", 10).Or("d = ?", 20)).
+		Where(Clause("e = ?", 30).Or("f = ?", 40)).
+		ToSql()
+
+	assert.Equal(t, "SELECT a FROM b WHERE (c = ? OR d = ?) AND (e = ? OR f = ?)", sql)
+	assert.Equal(t, 4, len(args))
+	assert.Equal(t, 10, args[0])
+	assert.Equal(t, 20, args[1])
+	assert.Equal(t, 30, args[2])
+	assert.Equal(t, 40, args[3])
+}
+
 func TestSelectWhereEqSql(t *testing.T) {
 	s := createFakeSession()
 

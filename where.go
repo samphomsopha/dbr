@@ -15,6 +15,20 @@ type whereFragment struct {
 }
 
 func newWhereFragment(whereSqlOrMap interface{}, args []interface{}) *whereFragment {
+
+	if c, ok := whereSqlOrMap.(*clauses); ok {
+		var sql string
+		var vals []interface{}
+		for _, clause := range c.cl {
+			if sql != "" {
+				sql += " OR "
+			}
+			sql += clause.Sql
+			vals = append(vals, clause.Values...)
+		}
+		return &whereFragment{Condition: sql, Values: vals}
+	}
+
 	switch pred := whereSqlOrMap.(type) {
 	case string:
 		return &whereFragment{Condition: pred, Values: args}
