@@ -65,8 +65,6 @@ func TestInsertRecordsToSql(t *testing.T) {
 	for i, arg := range args {
 		assert.Equal(t, arg, expectedArgs[i])
 	}
-
-	// assert.Equal(t, args, []interface{}{1, 88, false, 2, 99, true})
 }
 
 func TestInsertKeywordColumnName(t *testing.T) {
