@@ -10,9 +10,7 @@ type clauses struct {
 }
 
 func Clause(sql string, values ...interface{}) *clauses {
-	var c []*clause
-	c = append(c, &clause{Sql: sql, Values: values})
-	return &clauses{cl: c}
+	return &clauses{cl: []*clause{{Sql: sql, Values: values}}}
 }
 
 func (c *clauses) Or(sql string, values ...interface{}) *clauses {
