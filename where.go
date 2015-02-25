@@ -14,9 +14,9 @@ type whereFragment struct {
 	EqualityMap map[string]interface{}
 }
 
-func newWhereFragment(whereSqlOrMap interface{}, args []interface{}) *whereFragment {
+func newWhereFragment(whereSqlOrMapOrClause interface{}, args []interface{}) *whereFragment {
 
-	if c, ok := whereSqlOrMap.(*clauses); ok {
+	if c, ok := whereSqlOrMapOrClause.(*clauses); ok {
 		var sql bytes.Buffer
 		var vals []interface{}
 		for _, clause := range c.cl {
@@ -29,7 +29,7 @@ func newWhereFragment(whereSqlOrMap interface{}, args []interface{}) *whereFragm
 		return &whereFragment{Condition: sql.String(), Values: vals}
 	}
 
-	switch pred := whereSqlOrMap.(type) {
+	switch pred := whereSqlOrMapOrClause.(type) {
 	case string:
 		return &whereFragment{Condition: pred, Values: args}
 	case map[string]interface{}:
@@ -37,7 +37,7 @@ func newWhereFragment(whereSqlOrMap interface{}, args []interface{}) *whereFragm
 	case Eq:
 		return &whereFragment{EqualityMap: map[string]interface{}(pred)}
 	default:
-		panic("Invalid argument passed to Where. Pass a string or an Eq map.")
+		panic("Invalid argument passed to Where. Pass a string, Clause or an Eq map.")
 	}
 
 	return nil
