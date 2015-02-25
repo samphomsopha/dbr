@@ -244,7 +244,25 @@ func TestSelectAndClauseSql(t *testing.T) {
 	// (a = 1 AND b = 2) OR (c = 3 OR d = 4)
 	// Clause(Clause("a = ?", 1).And("b = ?", 2)).Or("c = ?", 3).Or("d = ?", 4)
 	// (a = 1 AND b = 2) OR c = 3 OR d = 4
+	// jk lol that's not feasible without globals
+
+	// how about
+	// Where(Or{Clause("a = ?", 1).And("b = ?", 2), Clause("c = ?", 3).Or("d = ?", 4)})
+	// (a = 1 AND b = 2) OR (c = 3 OR d = 4)
+	// Where(Or{Clause("a = ?", 1).And("b = ?", 2), Clause("c = ?", 3), Clause("d = ?", 4)})
+	// (a = 1 AND b = 2) OR c = 3 OR d = 4
 }
+
+// func TestSelectSubClause(t *testing.T) {
+// 	s := createFakeSession()
+
+// 	sql, args := s.Select("a").From("b").Where(Clause(Clause("c = ?", 1))).ToSql()
+// 	fmt.Println(sql)
+// 	fmt.Println(args)
+// 	assert.Equal(t, "SELECT a FROM b WHERE ((c = ?))", sql)
+// 	assert.Equal(t, 1, len(args))
+// 	assert.Equal(t, 1, args[0])
+// }
 
 func TestSelectWhereEqSql(t *testing.T) {
 	s := createFakeSession()
