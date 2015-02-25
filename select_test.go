@@ -223,10 +223,14 @@ func TestSelectAndClauseSql(t *testing.T) {
 	s := createFakeSession()
 
 	sql, args := s.Select("a").From("b").Where(Clause("c = ?", 1).And("d = ?", 2)).ToSql()
-	assert.Equal(t, "SELECT a FROM b WHERE (c = ? AND (d = ?))", sql)
+	assert.Equal(t, "SELECT a FROM b WHERE (c = ? AND d = ?)", sql)
 	assert.Equal(t, 2, len(args))
 	assert.Equal(t, 1, args[0])
 	assert.Equal(t, 2, args[1])
+
+	// sql, args = s.Select("a").From("b").
+	// 	Where(Clause("c = ?", 1).And(Clause("d = ?", 2))).
+	// 	ToSql()
 }
 
 func TestSelectWhereEqSql(t *testing.T) {

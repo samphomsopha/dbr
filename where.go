@@ -26,20 +26,11 @@ func newWhereFragment(whereSqlOrMapOrClause interface{}, args []interface{}) *wh
 				if clause.isOr {
 					sql.WriteString(" OR ")
 				} else {
-					sql.WriteString(" AND (")
+					sql.WriteString(" AND ")
 				}
-			} else if !clause.isOr {
-				sql.WriteRune('(')
 			}
 
 			sql.WriteString(clause.Sql)
-
-			if !started && !clause.isOr {
-				sql.WriteRune(')')
-			}
-			if !clause.isOr {
-				sql.WriteRune(')')
-			}
 
 			vals = append(vals, clause.Values...)
 			started = true
