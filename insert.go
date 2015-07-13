@@ -13,10 +13,11 @@ type InsertBuilder struct {
 	*Session
 	runner
 
-	Into string
-	Cols []string
-	Vals [][]interface{}
-	Recs []interface{}
+	Into       string
+	Cols       []string
+	Vals       [][]interface{}
+	Recs       []interface{}
+	UseReplace bool
 }
 
 // InsertInto instantiates a InsertBuilder for the given table
@@ -86,8 +87,12 @@ func (b *InsertBuilder) ToSql() (string, []interface{}) {
 	var sql bytes.Buffer
 	var placeholder bytes.Buffer // Build the placeholder like "(?,?,?)"
 	var args []interface{}
+	if b.UseReplace {
+		sql.WriteString("REPLACE INTO ")
+	} else {
+		sql.WriteString("INSERT INTO ")
+	}
 
-	sql.WriteString("INSERT INTO ")
 	sql.WriteString(b.Into)
 	sql.WriteString(" (")
 
