@@ -40,6 +40,12 @@ type NullBool struct {
 
 var nullString = []byte("null")
 
+//Set NullString value and mark as valid
+func (n *NullString) Set(text string) {
+	n.String = text
+	n.Valid = true
+}
+
 // MarshalJSON correctly serializes a NullString to JSON
 func (n *NullString) MarshalJSON() ([]byte, error) {
 	if n.Valid {
